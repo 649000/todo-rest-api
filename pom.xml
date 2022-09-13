@@ -35,7 +35,7 @@
                 </configuration>
             </plugin>
 
-<!--            Shade Plugin necessary to include maven dependencies in final jar-->
+<!--            Shade Plugin necessary to include maven dependencies in final jar for lambda-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
