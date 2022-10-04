@@ -20,7 +20,7 @@ import org.apache.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
 
-public class  CreateToDoItem implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+public class CreateToDo implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
     // APIGatewayV2HTTPEvent for HTTP API Gateway (Payload 2.0)
     // APIGatewayProxyRequestEvent for HTTP API Gateway (Payload 1.0)
     // APIGatewayProxyRequestEvent for REST API Gateway
@@ -41,6 +41,7 @@ public class  CreateToDoItem implements RequestHandler<APIGatewayProxyRequestEve
         DynamoDBMapper mapper = new DynamoDBMapper(client);
 
         ToDo toDo = gson.fromJson(request.getBody(), ToDo.class);
+        logger.log(toDo.toString());
 
         // Set expected false for an attribute -  Save only if did not exist
         ExpectedAttributeValue expectedAttributeValue = new ExpectedAttributeValue();

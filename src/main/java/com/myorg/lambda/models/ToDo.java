@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@DynamoDBTable(tableName="ToDoItem")
+@DynamoDBTable(tableName="ToDo")
 public class ToDo {
     @DynamoDBHashKey
     private String id;
