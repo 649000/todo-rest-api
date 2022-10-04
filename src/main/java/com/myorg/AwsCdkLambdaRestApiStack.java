@@ -1,9 +1,11 @@
 package com.myorg;
 
+import com.amazonaws.HttpMethod;
 import software.amazon.awscdk.Duration;
 import software.amazon.awscdk.services.apigateway.LambdaIntegration;
 import software.amazon.awscdk.services.apigateway.LambdaRestApi;
 import software.amazon.awscdk.services.apigateway.Resource;
+import software.amazon.awscdk.services.apigateway.StageOptions;
 import software.amazon.awscdk.services.dynamodb.*;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.FunctionProps;
@@ -60,7 +62,7 @@ public class AwsCdkLambdaRestApiStack extends Stack {
                 getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.GetOneToDo"));
 
         Function updateToDoFunction = new Function(this, "updateToDoFunction",
-                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.CreateToDo"));
+                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.UpdateToDo"));
 
         Function deleteToDoFunction = new Function(this, "deleteToDoFunction",
                 getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.DeleteToDo"));
@@ -80,6 +82,12 @@ public class AwsCdkLambdaRestApiStack extends Stack {
 
         // Defines an API Gateway REST API resource
         LambdaRestApi api = LambdaRestApi.Builder.create(this, "ToDo API Gateway")
+                .deployOptions(
+                        StageOptions.builder()
+                                .stageName("dev")
+                                .description("For Development Environment")
+                                .build()
+                )
                 .handler(getAllToDoFunction)
                 //Proxy: false, require explicit definition of API model
 //                .proxy(false)
@@ -88,16 +96,15 @@ public class AwsCdkLambdaRestApiStack extends Stack {
         //Set resource path: https://api-gateway/todo
         Resource todo = api.getRoot().addResource("todo");
         // HTTP GET /todo
-        todo.addMethod("GET", new LambdaIntegration(getAllToDoFunction));
+        todo.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getAllToDoFunction));
         // HTTP POST /todo
-        todo.addMethod("POST", new LambdaIntegration(createToDoFunction));
+        todo.addMethod(HttpMethod.POST.name(), new LambdaIntegration(createToDoFunction));
 
         //Set {ID} path: https://api-gateway/todo/{ID}
         Resource todoId = todo.addResource("{id}");
-        todoId.addMethod("GET", new LambdaIntegration(getOneToDoFunction));
-        todoId.addMethod("DELETE", new LambdaIntegration(deleteToDoFunction));
-        todoId.addMethod("POST", new LambdaIntegration(updateToDoFunction));
-
+        todoId.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getOneToDoFunction));
+        todoId.addMethod(HttpMethod.DELETE.name(), new LambdaIntegration(deleteToDoFunction));
+        todoId.addMethod(HttpMethod.PATCH.name(), new LambdaIntegration(updateToDoFunction));
 
     }
     private FunctionProps getLambdaFunctionProps(Map<String, String> lambdaEnvMap, String handler) {
