@@ -9,7 +9,6 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
-import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.google.gson.Gson;
 import com.myorg.lambda.models.ToDo;
 import org.apache.http.HttpHeaders;
@@ -17,7 +16,7 @@ import org.apache.http.HttpStatus;
 
 import java.util.HashMap;
 
-public class GetOneTodo implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+public class GetOneToDo implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
     // APIGatewayV2HTTPEvent for HTTP API Gateway (Payload 2.0)
     // APIGatewayProxyRequestEvent for HTTP API Gateway (Payload 1.0)
     // APIGatewayProxyRequestEvent for REST API Gateway
