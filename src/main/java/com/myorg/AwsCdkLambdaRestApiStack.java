@@ -1,8 +1,6 @@
 package com.myorg;
 
 import software.amazon.awscdk.Duration;
-import software.amazon.awscdk.RemovalPolicy;
-import software.amazon.awscdk.services.apigateway.HttpIntegration;
 import software.amazon.awscdk.services.apigateway.LambdaIntegration;
 import software.amazon.awscdk.services.apigateway.LambdaRestApi;
 import software.amazon.awscdk.services.apigateway.Resource;
@@ -39,7 +37,7 @@ public class AwsCdkLambdaRestApiStack extends Stack {
                 // The default removal policy is RETAIN, which means that cdk destroy will not attempt to delete
                 // the new table, and it will remain in your account until manually deleted. By setting the policy to
                 // DESTROY, cdk destroy will delete the table (even if it has data in it)
-                .removalPolicy(RemovalPolicy.DESTROY)
+//                .removalPolicy(RemovalPolicy.DESTROY)
                 .readCapacity(1)
                 .writeCapacity(1)
                 .billingMode(BillingMode.PROVISIONED)
@@ -52,54 +50,54 @@ public class AwsCdkLambdaRestApiStack extends Stack {
         lambdaEnvMap.put("TABLE_NAME", dynamodbTable.getTableName());
         lambdaEnvMap.put("PRIMARY_KEY","id");
 
-        Function createToDoItemFunction = new Function(this, "createToDoItemFunction",
+        Function createToDoFunction = new Function(this, "createToDoItemFunction",
                 getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.CreateToDo"));
 
-//        Function getAllToDoItemFunction = new Function(this, "getAllToDoItemFunction",
-//                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.GetOneTodo"));
+        Function getAllToDoFunction = new Function(this, "getAllToDoItemFunction",
+                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.GetAllToDo"));
 
-        Function getOneTodoFunction = new Function(this, "getToDoItemFunction",
-                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.GetOneTodo"));
-//
-//
-//        Function updateItemFunction = new Function(this, "updateItemFunction",
-//                getLambdaFunctionProps(lambdaEnvMap, "software.amazon.awscdk.examples.lambda.UpdateItem"));
-//
-//        Function deleteItemFunction = new Function(this, "deleteItemFunction",
-//                getLambdaFunctionProps(lambdaEnvMap, "software.amazon.awscdk.examples.lambda.DeleteItem"));
+        Function getOneToDoFunction = new Function(this, "getToDoItemFunction",
+                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.GetOneToDo"));
 
-        dynamodbTable.grantReadWriteData(createToDoItemFunction);
-//        dynamodbTable.grantReadWriteData(getAllToDoItemFunction);
-        dynamodbTable.grantReadWriteData(getOneTodoFunction);
-//        dynamodbTable.grantReadWriteData(updateItemFunction);
-//        dynamodbTable.grantReadWriteData(deleteItemFunction);
+        Function updateToDoFunction = new Function(this, "updateToDoFunction",
+                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.CreateToDo"));
 
-        // Defines an API Gateway REST API resource backed by our "hello" function
-        final Function hello = Function.Builder.create(this, "HelloHandler")
-                .runtime(Runtime.JAVA_11)
-                .code(Code.fromAsset("./target/aws-cdk-lambda-rest-api-0.1.jar"))
-                .handler("com.myorg.lambda.HelloWorld")
-                .build();
+        Function deleteToDoFunction = new Function(this, "deleteToDoFunction",
+                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.DeleteToDo"));
 
-        // Defines an API Gateway REST API resource backed by our "hello" function
-        LambdaRestApi api = LambdaRestApi.Builder.create(this, "Hello World Endpoint")
-                .handler(hello)
+        dynamodbTable.grantReadWriteData(createToDoFunction);
+        dynamodbTable.grantReadWriteData(getAllToDoFunction);
+        dynamodbTable.grantReadWriteData(getOneToDoFunction);
+        dynamodbTable.grantReadWriteData(updateToDoFunction);
+        dynamodbTable.grantReadWriteData(deleteToDoFunction);
+
+//        // Defines an API Gateway REST API resource backed by our "hello" function
+//        final Function hello = Function.Builder.create(this, "HelloHandler")
+//                .runtime(Runtime.JAVA_11)
+//                .code(Code.fromAsset("./target/aws-cdk-lambda-rest-api-0.1.jar"))
+//                .handler("com.myorg.lambda.HelloWorld")
+//                .build();
+
+        // Defines an API Gateway REST API resource
+        LambdaRestApi api = LambdaRestApi.Builder.create(this, "ToDo API Gateway")
+                .handler(getAllToDoFunction)
                 //Proxy: false, require explicit definition of API model
-                .proxy(false)
+//                .proxy(false)
                 .build();
 
-//        api.getRoot().addMethod("POST", new LambdaIntegration(createToDoItemFunction));
-//        api.getRoot().addMethod("DELETE", new LambdaIntegration(getOneTodoFunction));
-
+        //Set resource path: https://api-gateway/todo
         Resource todo = api.getRoot().addResource("todo");
-//        todo.addMethod("GET"); // GET /items
-        todo.addMethod("POST", new LambdaIntegration(createToDoItemFunction)); // POST /items
-        Resource todoId = todo.addResource("{id}");
+        // HTTP GET /todo
+        todo.addMethod("GET", new LambdaIntegration(getAllToDoFunction));
+        // HTTP POST /todo
+        todo.addMethod("POST", new LambdaIntegration(createToDoFunction));
 
-//        item.addMethod("GET"); // GET /items/{item}
-        // the default integration for methods is "handler", but one can
-        // customize this behavior per method or even a sub path.
-        todoId.addMethod("GET", new LambdaIntegration(getOneTodoFunction));
+        //Set {ID} path: https://api-gateway/todo/{ID}
+        Resource todoId = todo.addResource("{id}");
+        todoId.addMethod("GET", new LambdaIntegration(getOneToDoFunction));
+        todoId.addMethod("DELETE", new LambdaIntegration(deleteToDoFunction));
+        todoId.addMethod("POST", new LambdaIntegration(updateToDoFunction));
+
 
     }
     private FunctionProps getLambdaFunctionProps(Map<String, String> lambdaEnvMap, String handler) {
@@ -109,8 +107,8 @@ public class AwsCdkLambdaRestApiStack extends Stack {
                 .handler(handler)
                 .runtime(Runtime.JAVA_11)
                 .environment(lambdaEnvMap)
-//                .timeout(Duration.seconds(30))
-//                .memorySize(512)
+                .timeout(Duration.seconds(30))
+                .memorySize(512)
                 .build();
     }
 }
