@@ -55,7 +55,7 @@ These lambda functions were written in vanilla Java. Some of these functions are
 
 The other challenge faced was that Java is not a popular language in. lambda and AWS CDK. Finding resources or guides was challenging but the AWS guides were well-written and sufficient. 
 
-Reason= for choosing AWS amongst other cloud providers was to aid my learning for my AWS certifications. 
+Reason for choosing AWS amongst other cloud providers was to aid my learning for my AWS certifications. 
 
 #### Tools used 
 1. Postman  - to test the endpoints
