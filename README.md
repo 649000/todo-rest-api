@@ -55,7 +55,7 @@ These lambda functions were written in vanilla Java. Some of these functions are
 
 The other challenge faced was that Java is not a popular language when it comes to lambda and AWS CDK. Finding resources or guides was challenging but the AWS guides were well-written and sufficient. 
 
-Reason for choosing AWS amongst other cloud providers was to aid my learning for my AWS certifications. 
+Reason for choosing AWS amongst other cloud providers was to aid my learning for my AWS certifications. The use of CDK is pretty awesome for lack of a better word. It is similar to Terraform or other Code as a Infrastructure product. I created an entirely serverless REST API with authentication using lines of code. CDK is based on AWS Cloudformation. 
 
 #### Tools used 
 1. Postman  - to test the endpoints
