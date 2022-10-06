@@ -1,6 +1,5 @@
-# Welcome to your CDK Java project!
+# Serverless API using AWS CDK and Java
 
-This is a blank project for CDK development with Java.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
@@ -15,4 +14,30 @@ It is a [Maven](https://maven.apache.org/) based project, so you can open this p
  * `cdk diff`        compare deployed stack with current state
  * `cdk docs`        open CDK documentation
 
-Enjoy!
+## AWS Services
+1. AWS API Gateway
+2. AWS Lambda
+3. AWS Cognito User Pool
+4. AWS DynamoDB
+
+
+
+## Notes on the API Gateway
+The API gateway defined in this CDK project is using AWS REST API (not AWS HTTP API). 
+Differences on these API Gateways are available here:
+https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html
+
+### Securing the API Gateway
+
+1. Endpoint is secured using AWS Cognito User Pool
+2. By default, ID token is used as part of Authentication bearer token. 
+3. Access token can be used however it requires a custom client scope set in Cognito
+
+For Testing Purpose
+1. Client Credentials flow is set up to easily retrieve token
+2. This requires custom client scope hence, access token is used
+
+Reference: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-enable-cognito-user-pool.html
+
+
+
