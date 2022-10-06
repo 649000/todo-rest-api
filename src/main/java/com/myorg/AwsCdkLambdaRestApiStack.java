@@ -2,10 +2,10 @@ package com.myorg;
 
 import com.amazonaws.HttpMethod;
 import software.amazon.awscdk.Duration;
-import software.amazon.awscdk.services.apigateway.LambdaIntegration;
-import software.amazon.awscdk.services.apigateway.LambdaRestApi;
-import software.amazon.awscdk.services.apigateway.Resource;
-import software.amazon.awscdk.services.apigateway.StageOptions;
+import software.amazon.awscdk.RemovalPolicy;
+import software.amazon.awscdk.services.apigateway.*;
+import software.amazon.awscdk.services.cognito.IUserPool;
+import software.amazon.awscdk.services.cognito.UserPool;
 import software.amazon.awscdk.services.dynamodb.*;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.FunctionProps;
@@ -16,6 +16,7 @@ import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.services.lambda.Function;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AwsCdkLambdaRestApiStack extends Stack {
@@ -26,8 +27,7 @@ public class AwsCdkLambdaRestApiStack extends Stack {
     public AwsCdkLambdaRestApiStack(final Construct scope, final String id, final StackProps props) {
         super(scope, id, props);
 
-        // The code that defines your stack goes here
-        //DynamoDB
+        //DynamoDB Partition(Primary) Key
         Attribute partitionKey = Attribute.builder()
                 .name("id")
                 .type(AttributeType.STRING)
@@ -39,7 +39,8 @@ public class AwsCdkLambdaRestApiStack extends Stack {
                 // The default removal policy is RETAIN, which means that cdk destroy will not attempt to delete
                 // the new table, and it will remain in your account until manually deleted. By setting the policy to
                 // DESTROY, cdk destroy will delete the table (even if it has data in it)
-//                .removalPolicy(RemovalPolicy.DESTROY)
+                .removalPolicy(RemovalPolicy.DESTROY)
+//                .removalPolicy(RemovalPolicy.RETAIN)
                 .readCapacity(1)
                 .writeCapacity(1)
                 .billingMode(BillingMode.PROVISIONED)
@@ -47,11 +48,12 @@ public class AwsCdkLambdaRestApiStack extends Stack {
 
         Table dynamodbTable = new Table(this, "ToDoTable", tableProps);
 
-        //Lambda
+        // Setting up of lambda functions
         Map<String, String> lambdaEnvMap = new HashMap<>();
         lambdaEnvMap.put("TABLE_NAME", dynamodbTable.getTableName());
         lambdaEnvMap.put("PRIMARY_KEY","id");
 
+        // Declaring of Lambda functions, handler name must be same as name of class
         Function createToDoFunction = new Function(this, "createToDoItemFunction",
                 getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.CreateToDo"));
 
@@ -73,12 +75,6 @@ public class AwsCdkLambdaRestApiStack extends Stack {
         dynamodbTable.grantReadWriteData(updateToDoFunction);
         dynamodbTable.grantReadWriteData(deleteToDoFunction);
 
-//        // Defines an API Gateway REST API resource backed by our "hello" function
-//        final Function hello = Function.Builder.create(this, "HelloHandler")
-//                .runtime(Runtime.JAVA_11)
-//                .code(Code.fromAsset("./target/aws-cdk-lambda-rest-api-0.1.jar"))
-//                .handler("com.myorg.lambda.HelloWorld")
-//                .build();
 
         // Defines an API Gateway REST API resource
         LambdaRestApi api = LambdaRestApi.Builder.create(this, "ToDo API Gateway")
@@ -93,23 +89,50 @@ public class AwsCdkLambdaRestApiStack extends Stack {
 //                .proxy(false)
                 .build();
 
+
+        //Below code will create a new UserPool
+        //UserPool userPool = new UserPool(this, "userPool");
+
+        //However, we want to use an existing dev UserPool
+        IUserPool userPool = UserPool.fromUserPoolId(this, "devPool","ap-southeast-1_lkgFiXAec");
+
+        //Declare a Cognito Authorizer to secure endpoint
+        CognitoUserPoolsAuthorizer authorizer = CognitoUserPoolsAuthorizer.Builder
+                .create(this,"cognito-authorizer")
+                .cognitoUserPools(
+                        List.of(userPool)
+                )
+                .authorizerName("cognito-authorizer")
+                .build();
+
         //Set resource path: https://api-gateway/todo
         Resource todo = api.getRoot().addResource("todo");
+
         // HTTP GET /todo
-        todo.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getAllToDoFunction));
+        //Endpoint is secured and requires token to call.
+        todo.addMethod(
+                HttpMethod.GET.name(),
+                new LambdaIntegration(getAllToDoFunction),
+                MethodOptions.builder()
+                        .authorizer(authorizer)
+                        .authorizationType(AuthorizationType.COGNITO)
+                        .build()
+                );
+
         // HTTP POST /todo
         todo.addMethod(HttpMethod.POST.name(), new LambdaIntegration(createToDoFunction));
 
         //Set {ID} path: https://api-gateway/todo/{ID}
         Resource todoId = todo.addResource("{id}");
+
         todoId.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getOneToDoFunction));
         todoId.addMethod(HttpMethod.DELETE.name(), new LambdaIntegration(deleteToDoFunction));
         todoId.addMethod(HttpMethod.PATCH.name(), new LambdaIntegration(updateToDoFunction));
-
     }
+
     private FunctionProps getLambdaFunctionProps(Map<String, String> lambdaEnvMap, String handler) {
         return FunctionProps.builder()
-//                .code(Code.fromAsset("./asset/lambda-1.0.0-jar-with-dependencies.jar"))
+                //Note: Use of Maven Shade plugin to include dependency JARs into final jar file
                 .code(Code.fromAsset("./target/aws-cdk-lambda-rest-api-0.1.jar"))
                 .handler(handler)
                 .runtime(Runtime.JAVA_11)
