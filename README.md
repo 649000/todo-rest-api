@@ -1,4 +1,4 @@
-# Proof of Concept on Serverless API using AWS CDK and Java
+# Serverless REST API using AWS Cloud Development Kit (CDK) and Java
 
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
@@ -14,13 +14,20 @@ It is a [Maven](https://maven.apache.org/) based project, so you can open this p
  * `cdk diff`        compare deployed stack with current state
  * `cdk docs`        open CDK documentation
 
-## AWS Services
+## AWS Services 
 1. AWS API Gateway
 2. AWS Lambda
 3. AWS Cognito User Pool
 4. AWS DynamoDB
 
+## Project Status
 
+|Feature|Status  |
+|--|--|
+|CRUD on models|Completed  |
+|User authentication via Firebase Auth|Completed  |
+|Display results in JSON API| Completed
+| Deployed on Heroku| Completed
 
 ## Notes on the API Gateway
 The API gateway defined in this CDK project is using AWS REST API (not AWS HTTP API). 
