@@ -1,4 +1,4 @@
-# Serverless API using AWS CDK and Java
+# Proof of Concept on Serverless API using AWS CDK and Java
 
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
