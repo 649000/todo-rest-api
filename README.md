@@ -53,7 +53,7 @@ Developing a serverless application is a completely different paradigm. One has 
 
 These lambda functions were written in vanilla Java. Some of these functions are tedious and verbose. As a Spring framework developer, I appreciate what the Spring framework does by creating common classes or simplifying common patterns through the use of annotations.
 
-The other challenge faced was that Java is not a popular language in. lambda and AWS CDK. Finding resources or guides was challenging but the AWS guides were well-written and sufficient. 
+The other challenge faced was that Java is not a popular language when it comes to lambda and AWS CDK. Finding resources or guides was challenging but the AWS guides were well-written and sufficient. 
 
 Reason for choosing AWS amongst other cloud providers was to aid my learning for my AWS certifications. 
 
