@@ -15,8 +15,8 @@ It is a [Maven](https://maven.apache.org/) based project, so you can open this p
  * `cdk docs`        open CDK documentation
 
 ## AWS Services 
-1. AWS API Gateway
-2. AWS Lambda
+1. AWS REST API Gateway (not the HTTP API Gateway)
+2. AWS Lambda 
 3. AWS Cognito User Pool
 4. AWS DynamoDB
 
@@ -25,9 +25,9 @@ It is a [Maven](https://maven.apache.org/) based project, so you can open this p
 |Feature|Status  |
 |--|--|
 |CRUD on models|Completed  |
-|User authentication via Firebase Auth|Completed  |
+|Endpoint secured via Cognito|Completed  |
 |Display results in JSON API| Completed
-| Deployed on Heroku| Completed
+| Deployed on AWS| Completed
 
 ## Notes on the API Gateway
 The API gateway defined in this CDK project is using AWS REST API (not AWS HTTP API). 
