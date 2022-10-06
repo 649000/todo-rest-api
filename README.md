@@ -46,5 +46,17 @@ For Testing Purpose
 
 Reference: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-enable-cognito-user-pool.html
 
+## Reflection
+Cloud computing is ubiquitous, and AWS is one of the leaders in this space. Some firms are using serverless approach to cut out complexity in handling their technology pipeline. As a developer, it is important to keep myself updated with what's happening in the space. 
 
+Developing a serverless application is a completely different paradigm. One has to think in terms of services when it comes to application design. Building it out on the cloud also requires a certain level of knowledge of the services these cloud computing providers have.
 
+These lambda functions were written in vanilla Java. Some of these functions are tedious and verbose. As a Spring framework developer, I appreciate what the Spring framework does by creating common classes or simplifying common patterns through the use of annotations.
+
+The other challenge faced was that Java is not a popular language in. lambda and AWS CDK. Finding resources or guides was challenging but the AWS guides were well-written and sufficient. 
+
+Reason= for choosing AWS amongst other cloud providers was to aid my learning for my AWS certifications. 
+
+#### Tools used 
+1. Postman  - to test the endpoints
+2. Intellij IDE
