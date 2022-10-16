@@ -27,4 +27,13 @@ public class ToDo {
 
     @DynamoDBAttribute
     private Date dueDate;
+
+    @DynamoDBAttribute
+    private String cognito_sub;
+
+    @DynamoDBAttribute
+    private String cognito_username;
+
+    @DynamoDBAttribute
+    private String cognito_email;
 }
