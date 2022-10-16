@@ -17,6 +17,7 @@ import org.apache.http.HttpStatus;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GetAllToDo implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
@@ -34,6 +35,12 @@ public class GetAllToDo implements RequestHandler<APIGatewayProxyRequestEvent, A
         DynamoDBMapper mapper = new DynamoDBMapper(client);
 
         DynamoDBScanExpression scanExp = new DynamoDBScanExpression();
+
+        Map<String, Object> claim = (Map<String, Object>) request.getRequestContext().getAuthorizer().get("claims");
+        logger.log("sub: " + claim.get("sub"));
+        logger.log("cognito:username: " + claim.get("cognito:username"));
+        logger.log("email: " + claim.get("email"));
+
 
         List<ToDo> results = mapper.scan(ToDo.class, scanExp);
 
