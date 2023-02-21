@@ -1,9 +1,9 @@
 package com.todo;
 
 import com.amazonaws.HttpMethod;
-import software.amazon.awscdk.Duration;
-import software.amazon.awscdk.RemovalPolicy;
+import software.amazon.awscdk.*;
 import software.amazon.awscdk.services.apigateway.*;
+import software.amazon.awscdk.services.apigateway.Resource;
 import software.amazon.awscdk.services.cognito.IUserPool;
 import software.amazon.awscdk.services.cognito.UserPool;
 import software.amazon.awscdk.services.dynamodb.*;
@@ -11,8 +11,6 @@ import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.FunctionProps;
 import software.amazon.awscdk.services.lambda.Runtime;
 import software.constructs.Construct;
-import software.amazon.awscdk.Stack;
-import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.services.lambda.Function;
 
 import java.util.HashMap;
@@ -27,26 +25,8 @@ public class ToDoAppStack extends Stack {
     public ToDoAppStack(final Construct scope, final String id, final StackProps props) {
         super(scope, id, props);
 
-        //DynamoDB Partition(Primary) Key
-        Attribute partitionKey = Attribute.builder()
-                .name("id")
-                .type(AttributeType.STRING)
-                .build();
-
-        TableProps tableProps = TableProps.builder()
-                .tableName("ToDo")
-                .partitionKey(partitionKey)
-                // The default removal policy is RETAIN, which means that cdk destroy will not attempt to delete
-                // the new table, and it will remain in your account until manually deleted. By setting the policy to
-                // DESTROY, cdk destroy will delete the table (even if it has data in it)
-                .removalPolicy(RemovalPolicy.DESTROY)
-//                .removalPolicy(RemovalPolicy.RETAIN)
-                .readCapacity(1)
-                .writeCapacity(1)
-                .billingMode(BillingMode.PROVISIONED)
-                .build();
-
-        Table dynamodbTable = new Table(this, "ToDoTable", tableProps);
+        Table dynamodbTable = constructDynamoDB();
+        Tags.of(dynamodbTable).add("key", "value");
 
         // Setting up of lambda functions
         Map<String, String> lambdaEnvMap = new HashMap<>();
@@ -55,19 +35,19 @@ public class ToDoAppStack extends Stack {
 
         // Declaring of Lambda functions, handler name must be same as name of class
         Function createToDoFunction = new Function(this, "createToDoItemFunction",
-                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.CreateToDo"));
+                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.CreateToDo"));
 
         Function getAllToDoFunction = new Function(this, "getAllToDoItemFunction",
-                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.GetAllToDo"));
+                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.GetAllToDo"));
 
         Function getOneToDoFunction = new Function(this, "getToDoItemFunction",
-                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.GetOneToDo"));
+                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.GetOneToDo"));
 
         Function updateToDoFunction = new Function(this, "updateToDoFunction",
-                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.UpdateToDo"));
+                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.UpdateToDo"));
 
         Function deleteToDoFunction = new Function(this, "deleteToDoFunction",
-                getLambdaFunctionProps(lambdaEnvMap, "com.myorg.lambda.DeleteToDo"));
+                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.DeleteToDo"));
 
         dynamodbTable.grantReadWriteData(createToDoFunction);
         dynamodbTable.grantReadWriteData(getAllToDoFunction);
@@ -140,5 +120,34 @@ public class ToDoAppStack extends Stack {
                 .timeout(Duration.seconds(30))
                 .memorySize(512)
                 .build();
+    }
+
+    /**
+     *
+     * @return
+     */
+    private Table constructDynamoDB() {
+        //DynamoDB Partition(Primary) Key
+        Attribute partitionKey = Attribute.builder()
+                .name("id")
+                .type(AttributeType.STRING)
+                .build();
+
+        TableProps tableProps = TableProps.builder()
+                .tableName("ToDo")
+                .partitionKey(partitionKey)
+                // The default removal policy is RETAIN, which means that cdk destroy will not attempt to delete
+                // the new table, and it will remain in your account until manually deleted. By setting the policy to
+                // DESTROY, cdk destroy will delete the table (even if it has data in it)
+                .removalPolicy(RemovalPolicy.DESTROY)
+//                .removalPolicy(RemovalPolicy.RETAIN)
+                .readCapacity(1)
+                .writeCapacity(1)
+                .billingMode(BillingMode.PROVISIONED)
+                .build();
+
+        Table dynamodbTable = new Table(this, "ToDoTable", tableProps);
+        Tags.of(dynamodbTable).add("project", "ToDoApp");
+        return dynamodbTable;
     }
 }
