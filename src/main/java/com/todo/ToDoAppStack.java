@@ -28,7 +28,7 @@ public class ToDoAppStack extends Stack {
     public ToDoAppStack(final Construct scope, final String id, final StackProps props) {
         super(scope, id, props);
 
-        Table dynamodbTable = constructDynamoDB();
+        Table dynamodbTable = createDynamoDB();
 
         // Setting up of lambda functions
         Map<String, String> lambdaEnvMap = new HashMap<>();
@@ -57,49 +57,16 @@ public class ToDoAppStack extends Stack {
         dynamodbTable.grantReadWriteData(updateToDoFunction);
         dynamodbTable.grantReadWriteData(deleteToDoFunction);
 
+        CognitoUserPoolsAuthorizer authorizer = createCognitoAuthorizer();
 
-//        // Defines an API Gateway REST API resource
-        LambdaRestApi api = LambdaRestApi.Builder.create(this, "ToDo API Gateway")
-                .deployOptions(
-                        StageOptions.builder()
-                                .stageName("dev")
-                                .description("For Development Environment")
-                                .build()
-                )
-                .handler(getAllToDoFunction)
-                //Proxy: false, require explicit definition of API model
-//                .proxy(false)
-                .build();
-
-        //Below code will create a new UserPool
-        //UserPool userPool = new UserPool(this, "userPool");
-
-        //However, we want to use an existing dev UserPool
-        IUserPool userPool = UserPool.fromUserPoolId(this, "devPool","ap-southeast-1_lkgFiXAec");
-
-        //Declare a Cognito Authorizer to secure endpoint
-        // TODO: ID token and not access token
-        CognitoUserPoolsAuthorizer authorizer = CognitoUserPoolsAuthorizer.Builder
-                .create(this,"cognito-authorizer")
-                .cognitoUserPools(
-                        List.of(userPool)
-                )
-                .authorizerName("cognito-authorizer")
-                .build();
+        LambdaRestApi api = createApiGateway(authorizer, getAllToDoFunction);
 
         //Set resource path: https://api-gateway/todo
         Resource todo = api.getRoot().addResource("todo");
 
         // HTTP GET /todo
         //Endpoint is secured and requires token to call.
-        todo.addMethod(
-                HttpMethod.GET.name(),
-                new LambdaIntegration(getAllToDoFunction),
-                MethodOptions.builder()
-                        .authorizer(authorizer)
-                        .authorizationType(AuthorizationType.COGNITO)
-                        .build()
-                );
+        todo.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getAllToDoFunction));
 
         // HTTP POST /todo
         todo.addMethod(HttpMethod.POST.name(), new LambdaIntegration(createToDoFunction));
@@ -128,7 +95,7 @@ public class ToDoAppStack extends Stack {
      *
      * @return
      */
-    private Table constructDynamoDB() {
+    private Table createDynamoDB() {
         //DynamoDB Partition(Primary) Key
         Attribute partitionKey = Attribute.builder()
                 .name("id")
@@ -154,19 +121,55 @@ public class ToDoAppStack extends Stack {
         return dynamodbTable;
     }
 
-    private LambdaRestApi createGateway(Function getAllToDoFunction) {
-        // Defines an API Gateway REST API resource
-        LambdaRestApi api = LambdaRestApi.Builder.create(this, "ToDo API Gateway")
+    /**
+     *
+     * @return
+     */
+    private CognitoUserPoolsAuthorizer createCognitoAuthorizer(){
+        //Below code will create a new UserPool
+        //UserPool userPool = new UserPool(this, "userPool");
+        //However, we want to use an existing dev UserPool
+        IUserPool userPool = UserPool.fromUserPoolId(this, "dev","ap-southeast-1_lkgFiXAec");
+
+        //Declare a Cognito Authorizer to secure endpoint
+        // TODO: ID token and not access token
+
+        return CognitoUserPoolsAuthorizer.Builder
+                .create(this,"cognito-authorizer")
+                .cognitoUserPools(
+                        List.of(userPool)
+                )
+                .authorizerName("cognito-authorizer")
+                .build();
+    }
+
+    /**
+     *
+     * @param authorizer
+     * @param getAllToDoFunction
+     * @return
+     */
+    private LambdaRestApi createApiGateway(CognitoUserPoolsAuthorizer authorizer, Function getAllToDoFunction) {
+        return LambdaRestApi.Builder.create(this, "ToDo API Gateway")
+                .restApiName("ToDo REST API Gateway")
+                .description("REST API Gateway for To Do App")
                 .deployOptions(
                         StageOptions.builder()
                                 .stageName("dev")
                                 .description("For Development Environment")
                                 .build()
                 )
+                .defaultMethodOptions(
+                        MethodOptions.builder()
+                                .authorizer(authorizer)
+                                .authorizationType(AuthorizationType.COGNITO)
+                                .build()
+                )
                 .handler(getAllToDoFunction)
                 //Proxy: false, require explicit definition of API model
 //                .proxy(false)
                 .build();
-        return api;
     }
+
+
 }
