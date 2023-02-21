@@ -91,7 +91,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <mainClass>com.todo.AwsCdkLambdaRestApiApp</mainClass>
+                    <mainClass>com.todo.ToDoApp</mainClass>
                 </configuration>
             </plugin>
 

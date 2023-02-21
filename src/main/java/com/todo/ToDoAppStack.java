@@ -19,12 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AwsCdkLambdaRestApiStack extends Stack {
-    public AwsCdkLambdaRestApiStack(final Construct scope, final String id) {
+public class ToDoAppStack extends Stack {
+    public ToDoAppStack(final Construct scope, final String id) {
         this(scope, id, null);
     }
 
-    public AwsCdkLambdaRestApiStack(final Construct scope, final String id, final StackProps props) {
+    public ToDoAppStack(final Construct scope, final String id, final StackProps props) {
         super(scope, id, props);
 
         //DynamoDB Partition(Primary) Key
