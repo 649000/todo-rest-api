@@ -1,6 +1,7 @@
 package com.todo;
 
 import com.amazonaws.HttpMethod;
+import com.todo.lambda.GetAllToDo;
 import software.amazon.awscdk.*;
 import software.amazon.awscdk.services.apigateway.*;
 import software.amazon.awscdk.services.apigateway.Resource;
@@ -39,8 +40,11 @@ public class ToDoAppStack extends Stack {
         Function createToDoFunction = new Function(this, "createToDoFunction",
                 getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.CreateToDo"));
 
-        Function getAllToDoFunction = new Function(this, "getAllToDoFunction",
-                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.GetAllToDo"));
+//        Function getAllToDoFunction = new Function(this, "getAllToDoFunction",
+//                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.GetAllToDo"));
+
+        Function getAllToDoFunction = new Function(this, GetAllToDo.class.getSimpleName(),
+                getLambdaFunctionProps(lambdaEnvMap, GetAllToDo.class.getName()));
 
         Function getOneToDoFunction = new Function(this, "getOneToDoFunction",
                 getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.GetOneToDo"));
