@@ -1,25 +1,23 @@
-package com.myorg.lambda;
+package com.todo.lambda;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.google.gson.Gson;
-import com.myorg.lambda.models.ToDo;
+import com.todo.models.ToDo;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class GetAllToDo implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+public class UpdateToDo implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
     private Regions REGION = Regions.AP_SOUTHEAST_1;
 
@@ -34,22 +32,34 @@ public class GetAllToDo implements RequestHandler<APIGatewayProxyRequestEvent, A
                 .build();
         DynamoDBMapper mapper = new DynamoDBMapper(client);
 
-        DynamoDBScanExpression scanExp = new DynamoDBScanExpression();
-
-        Map<String, Object> claim = (Map<String, Object>) request.getRequestContext().getAuthorizer().get("claims");
-        logger.log("sub: " + claim.get("sub"));
-        logger.log("cognito:username: " + claim.get("cognito:username"));
-        logger.log("email: " + claim.get("email"));
-
-
-        List<ToDo> results = mapper.scan(ToDo.class, scanExp);
+        final String id = request.getPathParameters().get("id");
+        ToDo requestToDo = gson.fromJson(request.getBody(), ToDo.class);
 
         APIGatewayProxyResponseEvent responseEvent = new APIGatewayProxyResponseEvent();
-        responseEvent.setStatusCode(HttpStatus.SC_OK);
-        responseEvent.setBody(gson.toJson(results));
+
+        try {
+            ToDo toDo = mapper.load(ToDo.class, id);
+            toDo.setDescription(requestToDo.getDescription());
+            toDo.setPriority(requestToDo.getPriority());
+
+            mapper.save(toDo,
+                    DynamoDBMapperConfig.builder()
+                            .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES)
+                            .build());
+            responseEvent.setStatusCode(HttpStatus.SC_OK);
+
+            ToDo newToDo = mapper.load(ToDo.class, id);
+            responseEvent.setBody(gson.toJson(newToDo));
+        } catch (Exception e) {
+            logger.log(e.getMessage());
+            responseEvent.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+        }
+
+        //Setting headers
         HashMap<String, String> header = new HashMap<>();
-        header.put(HttpHeaders.CONTENT_TYPE,"application/json");
+        header.put(HttpHeaders.CONTENT_TYPE, "application/json");
         responseEvent.setHeaders(header);
+
         return responseEvent;
     }
 }

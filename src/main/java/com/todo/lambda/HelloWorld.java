@@ -1,4 +1,4 @@
-package com.myorg.lambda;
+package com.todo.lambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;

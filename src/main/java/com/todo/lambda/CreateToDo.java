@@ -1,4 +1,4 @@
-package com.myorg.lambda;
+package com.todo.lambda;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
@@ -13,7 +13,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.google.gson.Gson;
-import com.myorg.lambda.models.ToDo;
+import com.todo.models.ToDo;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 

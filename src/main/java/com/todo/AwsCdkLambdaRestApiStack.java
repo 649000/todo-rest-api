@@ -1,4 +1,4 @@
-package com.myorg;
+package com.todo;
 
 import com.amazonaws.HttpMethod;
 import software.amazon.awscdk.Duration;
