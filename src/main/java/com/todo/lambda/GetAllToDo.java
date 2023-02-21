@@ -36,10 +36,10 @@ public class GetAllToDo implements RequestHandler<APIGatewayProxyRequestEvent, A
 
         DynamoDBScanExpression scanExp = new DynamoDBScanExpression();
 
-        Map<String, Object> claim = (Map<String, Object>) request.getRequestContext().getAuthorizer().get("claims");
-        logger.log("sub: " + claim.get("sub"));
-        logger.log("cognito:username: " + claim.get("cognito:username"));
-        logger.log("email: " + claim.get("email"));
+//        Map<String, Object> claim = (Map<String, Object>) request.getRequestContext().getAuthorizer().get("claims");
+//        logger.log("sub: " + claim.get("sub"));
+//        logger.log("cognito:username: " + claim.get("cognito:username"));
+//        logger.log("email: " + claim.get("email"));
 
 
         List<ToDo> results = mapper.scan(ToDo.class, scanExp);

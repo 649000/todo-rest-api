@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 
 public class ToDoAppStack extends Stack {
+
+    private final String ENVIRONMENT = "dev";
+    private final String PROJECT_NAME = "ToDoApp";
     public ToDoAppStack(final Construct scope, final String id) {
         this(scope, id, null);
     }
@@ -27,92 +30,92 @@ public class ToDoAppStack extends Stack {
 
         Table dynamodbTable = constructDynamoDB();
 
-//        // Setting up of lambda functions
-//        Map<String, String> lambdaEnvMap = new HashMap<>();
-//        lambdaEnvMap.put("TABLE_NAME", dynamodbTable.getTableName());
-//        lambdaEnvMap.put("PRIMARY_KEY","id");
-//
-//        // Declaring of Lambda functions, handler name must be same as name of class
-//        Function createToDoFunction = new Function(this, "createToDoItemFunction",
-//                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.CreateToDo"));
-//
-//        Function getAllToDoFunction = new Function(this, "getAllToDoItemFunction",
-//                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.GetAllToDo"));
-//
-//        Function getOneToDoFunction = new Function(this, "getToDoItemFunction",
-//                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.GetOneToDo"));
-//
-//        Function updateToDoFunction = new Function(this, "updateToDoFunction",
-//                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.UpdateToDo"));
-//
-//        Function deleteToDoFunction = new Function(this, "deleteToDoFunction",
-//                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.DeleteToDo"));
-//
-//        dynamodbTable.grantReadWriteData(createToDoFunction);
-//        dynamodbTable.grantReadWriteData(getAllToDoFunction);
-//        dynamodbTable.grantReadWriteData(getOneToDoFunction);
-//        dynamodbTable.grantReadWriteData(updateToDoFunction);
-//        dynamodbTable.grantReadWriteData(deleteToDoFunction);
-//
-//
+        // Setting up of lambda functions
+        Map<String, String> lambdaEnvMap = new HashMap<>();
+        lambdaEnvMap.put("TABLE_NAME", dynamodbTable.getTableName());
+        lambdaEnvMap.put("PRIMARY_KEY","id");
+
+        // Declaring of Lambda functions, handler name must be same as name of class
+        Function createToDoFunction = new Function(this, "createToDoFunction",
+                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.CreateToDo"));
+
+        Function getAllToDoFunction = new Function(this, "getAllToDoFunction",
+                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.GetAllToDo"));
+
+        Function getOneToDoFunction = new Function(this, "getOneToDoFunction",
+                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.GetOneToDo"));
+
+        Function updateToDoFunction = new Function(this, "updateToDoFunction",
+                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.UpdateToDo"));
+
+        Function deleteToDoFunction = new Function(this, "deleteToDoFunction",
+                getLambdaFunctionProps(lambdaEnvMap, "com.todo.lambda.DeleteToDo"));
+
+        dynamodbTable.grantReadWriteData(createToDoFunction);
+        dynamodbTable.grantReadWriteData(getAllToDoFunction);
+        dynamodbTable.grantReadWriteData(getOneToDoFunction);
+        dynamodbTable.grantReadWriteData(updateToDoFunction);
+        dynamodbTable.grantReadWriteData(deleteToDoFunction);
+
+
 //        // Defines an API Gateway REST API resource
-//        LambdaRestApi api = LambdaRestApi.Builder.create(this, "ToDo API Gateway")
-//                .deployOptions(
-//                        StageOptions.builder()
-//                                .stageName("dev")
-//                                .description("For Development Environment")
-//                                .build()
-//                )
-//                .handler(getAllToDoFunction)
-//                //Proxy: false, require explicit definition of API model
-////                .proxy(false)
-//                .build();
-//
-//
-//        //Below code will create a new UserPool
-//        //UserPool userPool = new UserPool(this, "userPool");
-//
-//        //However, we want to use an existing dev UserPool
-//        IUserPool userPool = UserPool.fromUserPoolId(this, "devPool","ap-southeast-1_lkgFiXAec");
-//
-//        //Declare a Cognito Authorizer to secure endpoint
-//        CognitoUserPoolsAuthorizer authorizer = CognitoUserPoolsAuthorizer.Builder
-//                .create(this,"cognito-authorizer")
-//                .cognitoUserPools(
-//                        List.of(userPool)
-//                )
-//                .authorizerName("cognito-authorizer")
-//                .build();
-//
-//        //Set resource path: https://api-gateway/todo
-//        Resource todo = api.getRoot().addResource("todo");
-//
-//        // HTTP GET /todo
-//        //Endpoint is secured and requires token to call.
-//        todo.addMethod(
-//                HttpMethod.GET.name(),
-//                new LambdaIntegration(getAllToDoFunction),
-//                MethodOptions.builder()
-//                        .authorizer(authorizer)
-//                        .authorizationType(AuthorizationType.COGNITO)
-//                        .build()
-//                );
-//
-//        // HTTP POST /todo
-//        todo.addMethod(HttpMethod.POST.name(), new LambdaIntegration(createToDoFunction));
-//
-//        //Set {ID} path: https://api-gateway/todo/{ID}
-//        Resource todoId = todo.addResource("{id}");
-//
-//        todoId.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getOneToDoFunction));
-//        todoId.addMethod(HttpMethod.DELETE.name(), new LambdaIntegration(deleteToDoFunction));
-//        todoId.addMethod(HttpMethod.PATCH.name(), new LambdaIntegration(updateToDoFunction));
+        LambdaRestApi api = LambdaRestApi.Builder.create(this, "ToDo API Gateway")
+                .deployOptions(
+                        StageOptions.builder()
+                                .stageName("dev")
+                                .description("For Development Environment")
+                                .build()
+                )
+                .handler(getAllToDoFunction)
+                //Proxy: false, require explicit definition of API model
+//                .proxy(false)
+                .build();
+
+        //Below code will create a new UserPool
+        //UserPool userPool = new UserPool(this, "userPool");
+
+        //However, we want to use an existing dev UserPool
+        IUserPool userPool = UserPool.fromUserPoolId(this, "devPool","ap-southeast-1_lkgFiXAec");
+
+        //Declare a Cognito Authorizer to secure endpoint
+        // TODO: ID token and not access token
+        CognitoUserPoolsAuthorizer authorizer = CognitoUserPoolsAuthorizer.Builder
+                .create(this,"cognito-authorizer")
+                .cognitoUserPools(
+                        List.of(userPool)
+                )
+                .authorizerName("cognito-authorizer")
+                .build();
+
+        //Set resource path: https://api-gateway/todo
+        Resource todo = api.getRoot().addResource("todo");
+
+        // HTTP GET /todo
+        //Endpoint is secured and requires token to call.
+        todo.addMethod(
+                HttpMethod.GET.name(),
+                new LambdaIntegration(getAllToDoFunction),
+                MethodOptions.builder()
+                        .authorizer(authorizer)
+                        .authorizationType(AuthorizationType.COGNITO)
+                        .build()
+                );
+
+        // HTTP POST /todo
+        todo.addMethod(HttpMethod.POST.name(), new LambdaIntegration(createToDoFunction));
+
+        //Set {ID} path: https://api-gateway/todo/{ID}
+        Resource todoId = todo.addResource("{id}");
+
+        todoId.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getOneToDoFunction));
+        todoId.addMethod(HttpMethod.DELETE.name(), new LambdaIntegration(deleteToDoFunction));
+        todoId.addMethod(HttpMethod.PATCH.name(), new LambdaIntegration(updateToDoFunction));
     }
 
     private FunctionProps getLambdaFunctionProps(Map<String, String> lambdaEnvMap, String handler) {
         return FunctionProps.builder()
                 //Note: Use of Maven Shade plugin to include dependency JARs into final jar file
-                .code(Code.fromAsset("./target/aws-cdk-lambda-rest-api-0.1.jar"))
+                .code(Code.fromAsset("./target/todo-api-0.1.jar"))
                 .handler(handler)
                 .runtime(Runtime.JAVA_11)
                 .environment(lambdaEnvMap)
@@ -146,8 +149,24 @@ public class ToDoAppStack extends Stack {
                 .build();
 
         Table dynamodbTable = new Table(this, "ToDoTable", tableProps);
-        Tags.of(dynamodbTable).add("project", "ToDoApp");
-        Tags.of(dynamodbTable).add("environment", "dev");
+        Tags.of(dynamodbTable).add("project", PROJECT_NAME);
+        Tags.of(dynamodbTable).add("environment", ENVIRONMENT);
         return dynamodbTable;
+    }
+
+    private LambdaRestApi createGateway(Function getAllToDoFunction) {
+        // Defines an API Gateway REST API resource
+        LambdaRestApi api = LambdaRestApi.Builder.create(this, "ToDo API Gateway")
+                .deployOptions(
+                        StageOptions.builder()
+                                .stageName("dev")
+                                .description("For Development Environment")
+                                .build()
+                )
+                .handler(getAllToDoFunction)
+                //Proxy: false, require explicit definition of API model
+//                .proxy(false)
+                .build();
+        return api;
     }
 }
