@@ -40,19 +40,19 @@ public class ToDoAppStack extends Stack {
 
         // Declaring of Lambda functions, handler name must be same as name of class
         Function createToDoFunction = new Function(this, CreateToDo.class.getSimpleName(),
-                getLambdaFunctionProps(lambdaEnvMap, CreateToDo.class.getName()));
+                getLambdaFunctionProps(lambdaEnvMap, CreateToDo.class.getName(), "Create To Dos"));
 
         Function getAllToDoFunction = new Function(this, GetAllToDo.class.getSimpleName(),
-                getLambdaFunctionProps(lambdaEnvMap, GetAllToDo.class.getName()));
+                getLambdaFunctionProps(lambdaEnvMap, GetAllToDo.class.getName(), "Get All To Dos"));
 
         Function getOneToDoFunction = new Function(this, GetOneToDo.class.getSimpleName(),
-                getLambdaFunctionProps(lambdaEnvMap, GetOneToDo.class.getName()));
+                getLambdaFunctionProps(lambdaEnvMap, GetOneToDo.class.getName(), "Get One To Dos"));
 
         Function updateToDoFunction = new Function(this, UpdateToDo.class.getSimpleName(),
-                getLambdaFunctionProps(lambdaEnvMap, UpdateToDo.class.getName()));
+                getLambdaFunctionProps(lambdaEnvMap, UpdateToDo.class.getName(), "Update To Dos"));
 
         Function deleteToDoFunction = new Function(this, DeleteToDo.class.getSimpleName(),
-                getLambdaFunctionProps(lambdaEnvMap, DeleteToDo.class.getName()));
+                getLambdaFunctionProps(lambdaEnvMap, DeleteToDo.class.getName(), "Delete To Dos"));
 
         dynamodbTable.grantReadWriteData(createToDoFunction);
         dynamodbTable.grantReadWriteData(getAllToDoFunction);
@@ -67,11 +67,11 @@ public class ToDoAppStack extends Stack {
         //Set resource path: https://api-gateway/todo
         Resource todo = api.getRoot().addResource("todo");
 
-        // HTTP GET /todo
+        // HTTP GET https://api-gateway/todo
         //Endpoint is secured and requires token to call.
         todo.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getAllToDoFunction));
 
-        // HTTP POST /todo
+        // HTTP POST https://api-gateway/todo
         todo.addMethod(HttpMethod.POST.name(), new LambdaIntegration(createToDoFunction));
 
         //Set {ID} path: https://api-gateway/todo/{ID}
@@ -80,30 +80,6 @@ public class ToDoAppStack extends Stack {
         todoId.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getOneToDoFunction));
         todoId.addMethod(HttpMethod.DELETE.name(), new LambdaIntegration(deleteToDoFunction));
         todoId.addMethod(HttpMethod.PATCH.name(), new LambdaIntegration(updateToDoFunction));
-
-//        Tags.of(dynamodbTable).add("project", PROJECT_NAME);
-//        Tags.of(dynamodbTable).add("environment", ENVIRONMENT);
-//
-//        Tags.of(api).add("project", PROJECT_NAME);
-//        Tags.of(api).add("environment", ENVIRONMENT);
-//
-//        Tags.of(authorizer).add("project", PROJECT_NAME);
-//        Tags.of(authorizer).add("environment", ENVIRONMENT);
-//
-//        Tags.of(createToDoFunction).add("project", PROJECT_NAME);
-//        Tags.of(createToDoFunction).add("environment", ENVIRONMENT);
-//
-//        Tags.of(getAllToDoFunction).add("project", PROJECT_NAME);
-//        Tags.of(getAllToDoFunction).add("environment", ENVIRONMENT);
-//
-//        Tags.of(getOneToDoFunction).add("project", PROJECT_NAME);
-//        Tags.of(getOneToDoFunction).add("environment", ENVIRONMENT);
-//
-//        Tags.of(updateToDoFunction).add("project", PROJECT_NAME);
-//        Tags.of(updateToDoFunction).add("environment", ENVIRONMENT);
-//
-//        Tags.of(deleteToDoFunction).add("project", PROJECT_NAME);
-//        Tags.of(deleteToDoFunction).add("environment", ENVIRONMENT);
 
         constructList.add(dynamodbTable);
         constructList.add(api);
@@ -116,7 +92,7 @@ public class ToDoAppStack extends Stack {
         addTags(constructList);
     }
 
-    private FunctionProps getLambdaFunctionProps(Map<String, String> lambdaEnvMap, String handler) {
+    private FunctionProps getLambdaFunctionProps(Map<String, String> lambdaEnvMap, String handler, String description) {
         return FunctionProps.builder()
                 //Note: Use of Maven Shade plugin to include dependency JARs into final jar file
                 .code(Code.fromAsset("./target/todo-api-0.1.jar"))
@@ -125,6 +101,7 @@ public class ToDoAppStack extends Stack {
                 .environment(lambdaEnvMap)
                 .timeout(Duration.seconds(30))
                 .memorySize(512)
+                .description(description)
                 .build();
     }
 
