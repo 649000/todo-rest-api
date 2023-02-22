@@ -45,6 +45,9 @@ public class ToDoAppStack extends Stack {
         Function getAllToDoFunction = new Function(this, GetAllToDo.class.getSimpleName(),
                 getLambdaFunctionProps(lambdaEnvMap, GetAllToDo.class.getName(), "Get All To Dos"));
 
+        Function getAllByIdToDoFunction = new Function(this, GetAllByUserId.class.getSimpleName(),
+                getLambdaFunctionProps(lambdaEnvMap, GetAllByUserId.class.getName(), "Get To Dos By UserId"));
+
         Function getOneToDoFunction = new Function(this, GetOneToDo.class.getSimpleName(),
                 getLambdaFunctionProps(lambdaEnvMap, GetOneToDo.class.getName(), "Get One To Dos"));
 
@@ -59,6 +62,7 @@ public class ToDoAppStack extends Stack {
         dynamodbTable.grantReadWriteData(getOneToDoFunction);
         dynamodbTable.grantReadWriteData(updateToDoFunction);
         dynamodbTable.grantReadWriteData(deleteToDoFunction);
+        dynamodbTable.grantReadWriteData(getAllByIdToDoFunction);
 
         CognitoUserPoolsAuthorizer authorizer = createCognitoAuthorizer();
 
@@ -69,7 +73,7 @@ public class ToDoAppStack extends Stack {
 
         // HTTP GET https://api-gateway/todo
         //Endpoint is secured and requires token to call.
-        todo.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getAllToDoFunction));
+        todo.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getAllByIdToDoFunction));
 
         // HTTP POST https://api-gateway/todo
         todo.addMethod(HttpMethod.POST.name(), new LambdaIntegration(createToDoFunction));

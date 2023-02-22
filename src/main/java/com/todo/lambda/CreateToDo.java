@@ -41,6 +41,10 @@ public class CreateToDo implements RequestHandler<APIGatewayProxyRequestEvent, A
         DynamoDBMapper mapper = new DynamoDBMapper(client);
 
         ToDo toDo = gson.fromJson(request.getBody(), ToDo.class);
+        Map<String, Object> claims = (Map<String, Object>) request.getRequestContext().getAuthorizer().get("claims");
+        toDo.setCognito_email(claims.get("email").toString());
+        toDo.setCognito_sub(claims.get("sub").toString());
+        toDo.setCognito_username(claims.get("cognito:username").toString());
         logger.log(toDo.toString());
 
         // Set expected false for an attribute -  Save only if did not exist
