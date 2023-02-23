@@ -13,7 +13,7 @@ This project is a serverless REST API for a To Do App. It is built using AWS Clo
 |--|--|
 |CRUD on models|Completed  |
 |Endpoint secured via Cognito|Completed  |
-|Display results in JSON API| Completed
+|Display results in JSON | Completed
 | Deployed on AWS| Completed
 
 
