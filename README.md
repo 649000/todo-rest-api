@@ -1,4 +1,4 @@
-# Serverless REST API using AWS Cloud Development Kit (CDK) and Java
+# Serverless To Do REST API
 
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
