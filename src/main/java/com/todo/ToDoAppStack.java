@@ -3,17 +3,16 @@ package com.todo;
 import com.amazonaws.HttpMethod;
 import com.todo.lambda.*;
 import software.amazon.awscdk.*;
-import software.amazon.awscdk.services.apigateway.*;
 import software.amazon.awscdk.services.apigateway.Resource;
+import software.amazon.awscdk.services.apigateway.*;
 import software.amazon.awscdk.services.cognito.IUserPool;
 import software.amazon.awscdk.services.cognito.UserPool;
-import software.amazon.awscdk.services.cognito.UserPoolClientOptions;
 import software.amazon.awscdk.services.dynamodb.*;
 import software.amazon.awscdk.services.lambda.Code;
+import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.FunctionProps;
 import software.amazon.awscdk.services.lambda.Runtime;
 import software.constructs.Construct;
-import software.amazon.awscdk.services.lambda.Function;
 import software.constructs.IConstruct;
 
 import java.util.ArrayList;
@@ -140,7 +139,6 @@ public class ToDoAppStack extends Stack {
     }
 
     /**
-     *
      * @return
      */
     private CognitoUserPoolsAuthorizer createCognitoAuthorizer() {
@@ -159,10 +157,12 @@ public class ToDoAppStack extends Stack {
                 .build();
     }
 
-    /**Requires ID Token to get access.
+    /**
+     * Requires ID Token to get access.
      * Access Token with Custom Scope can be used. Refer to:
      * https://stackoverflow.com/questions/50404761/aws-api-gateway-using-access-token-with-cognito-user-pool-authorizer
      * This custom-scope added is only available for token retrieved via
+     *
      * @param authorizer
      * @param getAllToDoFunction
      * @return
