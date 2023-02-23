@@ -19,6 +19,7 @@ This project is a serverless REST API for a To Do App. It is built using AWS Clo
 
 ## Useful commands
 This project does not run locally, it requires CDK CLI to deploy it onto AWS.
+Guide on installing CDK CLI is [available here.](https://docs.aws.amazon.com/cdk/v2/guide/cli.html)
 
  * `mvn package`     compile and run tests
  * `cdk ls`          list all stacks in the app
