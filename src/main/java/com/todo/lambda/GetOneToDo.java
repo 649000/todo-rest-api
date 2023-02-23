@@ -29,10 +29,8 @@ public class GetOneToDo implements RequestHandler<APIGatewayProxyRequestEvent, A
         LambdaLogger logger = context.getLogger();
         logger.log("APIGatewayProxyRequestEvent::" + requestEvent.toString());
 
-        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(REGION)
-                .build();
-        DynamoDBMapper mapper = new DynamoDBMapper(client);
+        DynamoDBMapper mapper = getDynamoDB();
+
         final String id = requestEvent.getPathParameters().get("id");
 
         ToDo toDo = mapper.load(ToDo.class, id);
@@ -45,5 +43,13 @@ public class GetOneToDo implements RequestHandler<APIGatewayProxyRequestEvent, A
         header.put(HttpHeaders.CONTENT_TYPE,"application/json");
         response.setHeaders(header);
         return response;
+    }
+
+    private DynamoDBMapper getDynamoDB() {
+        //Initializing db settings
+        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
+                .withRegion(REGION)
+                .build();
+        return new DynamoDBMapper(client);
     }
 }

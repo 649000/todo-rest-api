@@ -29,23 +29,15 @@ public class CreateToDo implements RequestHandler<APIGatewayProxyRequestEvent, A
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
-
         LambdaLogger logger = context.getLogger();
         Gson gson = new Gson();
+
         logger.log("APIGatewayProxyRequestEvent::" + request.toString());
-
-        //Initializing db settings
-        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(REGION)
-                .build();
-        DynamoDBMapper mapper = new DynamoDBMapper(client);
-
         ToDo toDo = gson.fromJson(request.getBody(), ToDo.class);
-        Map<String, Object> claims = (Map<String, Object>) request.getRequestContext().getAuthorizer().get("claims");
-        toDo.setCognito_email(claims.get("email").toString());
-        toDo.setCognito_sub(claims.get("sub").toString());
-        toDo.setCognito_username(claims.get("cognito:username").toString());
-        logger.log(toDo.toString());
+        toDo = appendToDo(toDo, request);
+        logger.log("ToDo::" + toDo);
+
+        DynamoDBMapper mapper = getDynamoDB();
 
         // Set expected false for an attribute -  Save only if did not exist
         ExpectedAttributeValue expectedAttributeValue = new ExpectedAttributeValue();
@@ -74,7 +66,22 @@ public class CreateToDo implements RequestHandler<APIGatewayProxyRequestEvent, A
         HashMap<String, String> header = new HashMap<>();
         header.put(HttpHeaders.CONTENT_TYPE, "application/json");
         response.setHeaders(header);
-
         return response;
+    }
+
+    private DynamoDBMapper getDynamoDB() {
+        //Initializing db settings
+        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
+                .withRegion(REGION)
+                .build();
+       return new DynamoDBMapper(client);
+    }
+
+    private ToDo appendToDo(ToDo toDo, APIGatewayProxyRequestEvent request) {
+        Map<String, Object> claims = (Map<String, Object>) request.getRequestContext().getAuthorizer().get("claims");
+        toDo.setCognito_email(claims.get("email").toString());
+        toDo.setCognito_sub(claims.get("sub").toString());
+        toDo.setCognito_username(claims.get("cognito:username").toString());
+        return toDo;
     }
 }

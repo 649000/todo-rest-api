@@ -27,10 +27,7 @@ public class UpdateToDo implements RequestHandler<APIGatewayProxyRequestEvent, A
         LambdaLogger logger = context.getLogger();
         logger.log("APIGatewayProxyRequestEvent::" + request.toString());
 
-        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(REGION)
-                .build();
-        DynamoDBMapper mapper = new DynamoDBMapper(client);
+        DynamoDBMapper mapper = getDynamoDB();
 
         final String id = request.getPathParameters().get("id");
         ToDo requestToDo = gson.fromJson(request.getBody(), ToDo.class);
@@ -59,7 +56,14 @@ public class UpdateToDo implements RequestHandler<APIGatewayProxyRequestEvent, A
         HashMap<String, String> header = new HashMap<>();
         header.put(HttpHeaders.CONTENT_TYPE, "application/json");
         responseEvent.setHeaders(header);
-
         return responseEvent;
+    }
+
+    private DynamoDBMapper getDynamoDB() {
+        //Initializing db settings
+        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
+                .withRegion(REGION)
+                .build();
+        return new DynamoDBMapper(client);
     }
 }

@@ -24,14 +24,11 @@ public class GetAllToDo implements RequestHandler<APIGatewayProxyRequestEvent, A
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
-        Gson gson = new Gson();
         LambdaLogger logger = context.getLogger();
         logger.log("APIGatewayProxyRequestEvent::" + request.toString());
+        Gson gson = new Gson();
 
-        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(REGION)
-                .build();
-        DynamoDBMapper mapper = new DynamoDBMapper(client);
+        DynamoDBMapper mapper = getDynamoDB();
 
         DynamoDBScanExpression scanExp = new DynamoDBScanExpression();
 
@@ -44,5 +41,13 @@ public class GetAllToDo implements RequestHandler<APIGatewayProxyRequestEvent, A
         header.put(HttpHeaders.CONTENT_TYPE,"application/json");
         responseEvent.setHeaders(header);
         return responseEvent;
+    }
+
+    private DynamoDBMapper getDynamoDB() {
+        //Initializing db settings
+        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
+                .withRegion(REGION)
+                .build();
+        return new DynamoDBMapper(client);
     }
 }

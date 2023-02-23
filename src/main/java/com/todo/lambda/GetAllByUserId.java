@@ -29,12 +29,11 @@ public class GetAllByUserId implements RequestHandler<APIGatewayProxyRequestEven
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
-        Gson gson = new Gson();
         LambdaLogger logger = context.getLogger();
         logger.log("APIGatewayProxyRequestEvent::" + request.toString());
+        Gson gson = new Gson();
 
         DynamoDBMapper mapper = getDynamoDB();
-
 
         Map<String, Object> claims = (Map<String, Object>) request.getRequestContext().getAuthorizer().get("claims");
 
@@ -43,8 +42,6 @@ public class GetAllByUserId implements RequestHandler<APIGatewayProxyRequestEven
                 new Condition()
                 .withComparisonOperator(ComparisonOperator.EQ)
                 .withAttributeValueList(new AttributeValue().withS(claims.get("sub").toString())));
-
-
 
         List<ToDo> results = mapper.scan(ToDo.class, scanExp);
 
