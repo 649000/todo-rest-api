@@ -7,6 +7,8 @@ This project is a serverless REST API for a To Do App. It is built using AWS Clo
 3. AWS Cognito User Pool
 4. AWS DynamoDB
 
+AWS CDK is an open-source software development framework for defining cloud infrastructure as code with modern programming languages and deploying it through AWS CloudFormation.
+
 ## Project Status
 
 |Feature|Status  |
