@@ -1,22 +1,9 @@
 # Serverless To Do REST API
 
+This project is a serverless REST API for a To Do App. It is built using AWS Cloud Development Kit (CDK) with the following AWS services:
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
-It is a [Maven](https://maven.apache.org/) based project, so you can open this project with any Maven compatible Java IDE to build and run tests.
-
-## Useful commands
-
- * `mvn package`     compile and run tests
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
-
-## AWS Services 
 1. AWS REST API Gateway (not the HTTP API Gateway)
-2. AWS Lambda 
+2. AWS Lambda
 3. AWS Cognito User Pool
 4. AWS DynamoDB
 
@@ -28,6 +15,18 @@ It is a [Maven](https://maven.apache.org/) based project, so you can open this p
 |Endpoint secured via Cognito|Completed  |
 |Display results in JSON API| Completed
 | Deployed on AWS| Completed
+
+
+## Useful commands
+This project does not run locally, it requires CDK CLI to deploy it onto AWS.
+
+ * `mvn package`     compile and run tests
+ * `cdk ls`          list all stacks in the app
+ * `cdk synth`       emits the synthesized CloudFormation template
+ * `cdk deploy`      deploy this stack to default AWS account/region
+ * `cdk diff`        compare deployed stack with current state
+ * `cdk docs`        open CDK documentation
+
 
 ## Notes on the API Gateway
 The API gateway defined in this CDK project is using AWS REST API (not AWS HTTP API). 
