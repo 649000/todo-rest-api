@@ -2,7 +2,7 @@
 
 This project is a serverless REST API for a To Do App. It is built using AWS Cloud Development Kit (CDK) with the following AWS services:
 
-1. AWS REST API Gateway (not the HTTP API Gateway)
+1. AWS REST API Gateway
 2. AWS Lambda
 3. AWS Cognito User Pool
 4. AWS DynamoDB
@@ -30,9 +30,6 @@ Guide on installing CDK CLI is [available here.](https://docs.aws.amazon.com/cdk
 
 
 ## Notes on the API Gateway
-The API gateway defined in this CDK project is using AWS REST API (not AWS HTTP API). 
-Differences on these API Gateways are available here:
-https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html
 
 ### Securing the API Gateway
 
