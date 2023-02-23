@@ -7,6 +7,7 @@ import software.amazon.awscdk.services.apigateway.*;
 import software.amazon.awscdk.services.apigateway.Resource;
 import software.amazon.awscdk.services.cognito.IUserPool;
 import software.amazon.awscdk.services.cognito.UserPool;
+import software.amazon.awscdk.services.cognito.UserPoolClientOptions;
 import software.amazon.awscdk.services.dynamodb.*;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.FunctionProps;
@@ -75,6 +76,9 @@ public class ToDoAppStack extends Stack {
         //Endpoint is secured and requires token to call.
         todo.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getAllByIdToDoFunction));
 
+//        todo.addMethod(HttpMethod.GET.name(), new LambdaIntegration(getAllByIdToDoFunction), MethodOptions.builder()
+//                .authorizationScopes())
+
         // HTTP POST https://api-gateway/todo
         todo.addMethod(HttpMethod.POST.name(), new LambdaIntegration(createToDoFunction));
 
@@ -136,6 +140,7 @@ public class ToDoAppStack extends Stack {
     }
 
     /**
+     *
      * @return
      */
     private CognitoUserPoolsAuthorizer createCognitoAuthorizer() {
@@ -145,8 +150,6 @@ public class ToDoAppStack extends Stack {
         IUserPool userPool = UserPool.fromUserPoolId(this, "dev", "ap-southeast-1_lkgFiXAec");
 
         //Declare a Cognito Authorizer to secure endpoint
-        // TODO: ID token and not access token
-
         return CognitoUserPoolsAuthorizer.Builder
                 .create(this, "ToDoCognitoAuthorizer")
                 .cognitoUserPools(
@@ -156,7 +159,10 @@ public class ToDoAppStack extends Stack {
                 .build();
     }
 
-    /**
+    /**Requires ID Token to get access.
+     * Access Token with Custom Scope can be used. Refer to:
+     * https://stackoverflow.com/questions/50404761/aws-api-gateway-using-access-token-with-cognito-user-pool-authorizer
+     * This custom-scope added is only available for token retrieved via
      * @param authorizer
      * @param getAllToDoFunction
      * @return
@@ -175,6 +181,7 @@ public class ToDoAppStack extends Stack {
                         MethodOptions.builder()
                                 .authorizer(authorizer)
                                 .authorizationType(AuthorizationType.COGNITO)
+//                                .authorizationScopes(List.of("https://google.com/custom-scope"))
                                 .build()
                 )
                 .handler(getAllToDoFunction)
