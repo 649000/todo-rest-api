@@ -1,13 +1,20 @@
-# Serverless To Do REST API
+# Serverless To-Do App API
 
-This project is a serverless REST API for a To Do App. It is built using AWS Cloud Development Kit (CDK) with the following AWS services:
+## Overview
 
-1. AWS REST API Gateway
-2. AWS Lambda
-3. AWS Cognito User Pool
-4. AWS DynamoDB
+This project encapsulates a serverless REST API catering to a To-Do application. Constructed using the AWS Cloud Development Kit (CDK), it seamlessly integrates an array of AWS services to power its functionality.
 
-AWS CDK is an open-source software development framework for defining cloud infrastructure as code with modern programming languages and deploying it through AWS CloudFormation.
+## AWS CDK
+
+AWS CDK stands as an open-source software development framework, empowering the definition of cloud infrastructure as code using modern programming languages. It facilitates the deployment of infrastructure through AWS CloudFormation, enhancing the efficiency and reproducibility of deployment processes.
+
+This project harnesses the power of AWS CDK to orchestrate a scalable serverless infrastructure, enabling seamless management and deployment of the To-Do App's backend components.
+
+## AWS Services Utilized
+* AWS REST API Gateway: Facilitating a robust interface for API interactions.
+* AWS Lambda: Enabling serverless function execution for scalable and on-demand computing.
+* AWS Cognito User Pool: Offering secure user authentication and authorization capabilities.
+* AWS DynamoDB: Providing a fully managed NoSQL database solution for efficient data storage.
 
 ## Project Status
 
@@ -19,7 +26,7 @@ AWS CDK is an open-source software development framework for defining cloud infr
 | Deployed on AWS| Completed
 
 
-## Useful commands
+## Installation and Setup Instructions
 This project does not run locally, it requires CDK CLI to deploy it onto AWS.
 Guide on installing CDK CLI is [available here.](https://docs.aws.amazon.com/cdk/v2/guide/cli.html)
 
@@ -46,16 +53,12 @@ For Testing Purpose
 Reference: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-enable-cognito-user-pool.html
 
 ## Reflection
-Cloud computing is ubiquitous, and AWS is one of the leaders in this space. Some firms are using serverless approach to cut out complexity in handling their technology pipeline. As a developer, it is important to keep myself updated with what's happening in the space. 
+In today's technology landscape, cloud computing has become pervasive, and AWS stands prominently as a frontrunner in this domain. Many organizations are embracing serverless approaches to streamline their tech infrastructure. As a developer, staying abreast of these advancements is crucial.
 
-Developing a serverless application is a completely different paradigm. One has to think in terms of services when it comes to application design. Building it out on the cloud also requires a certain level of knowledge of the services these cloud computing providers have.
+Venturing into the realm of serverless applications marks a paradigm shift in development. It demands a service-oriented mindset, wherein application design revolves around leveraging distinct cloud services. Crafting applications in the cloud necessitates a profound understanding of the diverse offerings provided by cloud computing providers.
 
-These lambda functions were written in vanilla Java. Some of these functions are tedious and verbose. As a Spring framework developer, I appreciate what the Spring framework does by creating common classes or simplifying common patterns through the use of annotations.
+While implementing lambda functions in vanilla Java, I found some functions to be verbose and laborious. As a developer well-versed in the Spring framework, I value its ability to simplify complex patterns and streamline repetitive tasks through intuitive annotations.
 
-The other challenge faced was that Java is not a popular language when it comes to lambda and AWS CDK. Finding resources or guides was challenging but the AWS guides were well-written and sufficient. 
+Navigating the landscape of lambda and AWS CDK with Java posed its challenges. Despite Java not being as prevalent in this domain, I found the AWS guides comprehensive, offering sufficient insights and guidance.
 
-Reason for choosing AWS amongst other cloud providers was to aid my learning for my AWS certifications. The use of CDK is pretty awesome for lack of a better word. It is similar to Terraform or other Code as a Infrastructure product. I created an entirely serverless REST API with authentication using lines of code. CDK is based on AWS Cloudformation. 
-
-#### Tools used 
-1. Postman  - to test the endpoints
-2. Intellij IDE
+My decision to opt for AWS among various cloud providers was primarily driven by my pursuit of AWS certifications. The utilization of CDK was an exhilarating experience, simplifying infrastructure provisioning akin to products like Terraform. With just a few lines of code, I constructed a fully serverless REST API fortified with authentication capabilities. CDK, rooted in AWS CloudFormation, proved remarkably efficient and empowering for infrastructure-as-code development.
