@@ -9,15 +9,15 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <aws.cdk.version>2.38.0</aws.cdk.version>
-        <aws.lambda.core.version>1.2.1</aws.lambda.core.version>
-        <aws.lambda.events.version>3.11.0</aws.lambda.events.version>
-        <aws.lambda.log4j2.version>1.5.1</aws.lambda.log4j2.version>
-        <aws.dynamodb.version>1.12.314</aws.dynamodb.version>
+        <aws.cdk.version>2.126.0</aws.cdk.version>
+        <aws.lambda.core.version>1.2.3</aws.lambda.core.version>
+        <aws.lambda.events.version>3.11.4</aws.lambda.events.version>
+        <aws.lambda.log4j2.version>1.6.0</aws.lambda.log4j2.version>
+        <aws.dynamodb.version>1.12.651</aws.dynamodb.version>
         <constructs.version>[10.0.0,11.0.0)</constructs.version>
         <junit.version>5.7.1</junit.version>
         <gson.version>2.9.1</gson.version>
-        <lombok.version>1.18.22</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
     </properties>
 
     <dependencies>
@@ -79,7 +79,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.12.1</version>
                 <configuration>
                     <source>9</source>
                     <target>9</target>
@@ -89,7 +89,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.1</version>
                 <configuration>
                     <mainClass>com.todo.ToDoApp</mainClass>
                 </configuration>
@@ -99,7 +99,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>3.5.1</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
